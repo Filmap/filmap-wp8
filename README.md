@@ -1,29 +1,48 @@
 # The Movie App (temporary name)
 
+**Table of Contents**
+
+- [Introdução](#intro)
+	- [Equipe](#equipe)
+	- [O projeto](#projeto)
+- [Especificação](#espec)
+	- [Funcionalidades](#func)
+	- [Cenários](#cen)
+		- [C1 - Abrir o app pela primeira vez](#c1)
+		- [C2. Abrir o app pela segunda vez (aka já está logado)](#c2)
+		- [C3. Marcar filme como assistido](#c3)
+		- [C4. Pesquisar por filme](#c4)
+		- [C5. Marcar como quer assistir](#c5)
+		- [C6. Ver filmes próximos](#c6)
+	- [Checklist de cenários implementados](#checkcen)
+	- [Esboço de tabelas](#esboc)
+		- [User](#usertable)
+		- [Movie](#movietable)
+
 _____
 
-## Introdução
+## <a name="intro"></a>Introdução
 
 App para a disciplina de Desenvolvimento Mobile (IFRN - 2015.2). 
 
-### Equipe
+### <a name="equipe"></a>Equipe
 
 * [Duarte Fernandes](https://github.com/duartefq)
 * [Ivanilson Melo](https://github.com/ivmjunior)
 
-### O projeto
+### <a name="projeto"></a>O projeto
 
 Idealmente um aplicativo de gerencialmento de filmes, com o **The Movie App** os usuários poderão adicionar a uma lista pessoal os filmes que assistiu. Com o app, ele poderá também saber quais filmes outros usuários estão assistindo *ao seu redor*.
 
-## Especificação
+## <a name="espec"></a>Especificação
 
-### Funcionalidades
+### <a name="func"></a>Funcionalidades
 
 1. Marcar filmes que assistiu
 2. Pesquisar por filmes
 3. Ver filmes marcados próximos (usando geolocalização)
 
-### Cenários
+### <a name="cen"></a>Cenários
 
 #### <a name="c1"></a>C1 - Abrir o app pela primeira vez
 
@@ -95,7 +114,7 @@ _____
 	- Usuário marca como assistido, [ver caso 3](#c3).
 	- Usuário marca como *quer assistir* ([ver caso 5](#c5))
 
-### Checklist de cenários implementados
+### <a name="checkcen"></a>Checklist de cenários implementados
 
 - [ ] [C1: Abrir o app pela primeira vez](#c1)
 - [ ] [C2: Abrir o app pela segunda vez (aka já está logado)](#c2)
@@ -104,11 +123,11 @@ _____
 - [ ] [C5: Marcar como *quer assistir*](#c5)
 - [ ] [C6: Ver *filmes próximos*](#c6)
 
-### Esboço de tabelas
+### <a name="esboc"></a>Esboço de tabelas
 
 > [ User ] 1 --- n [ Movie ]
 
-#### User
+#### <a name="usertable"></a>User
 _____
 
 | id 			| user			| name			| email			|
@@ -124,7 +143,7 @@ _____
 
 _____
 
-#### Movie
+#### <a name="movietable"></a>Movie
 
 | id 			| id_omdb		| user			| geo			| watched		|
 | ------------- |:-------------:| :------------:|:-------------:|--------------:|

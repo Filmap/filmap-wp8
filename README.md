@@ -106,6 +106,8 @@ _____
 
 ### Esboço de tabelas
 
+> [ User ] 1 --- n [ Movie ]
+
 #### User
 _____
 
@@ -124,14 +126,15 @@ _____
 
 #### Movie
 
-| id 			| id_omdb		| watched		| geo			|
-| ------------- |:-------------:| :------------:|--------------:|
-| ... 			| ... 			| ... 			| ... 			|
+| id 			| id_omdb		| user			| geo			| watched		|
+| ------------- |:-------------:| :------------:|:-------------:|--------------:|
+| ... 			| ... 			| ... 			| ... 			| ... 			|
 
 ** Especificação **
 
 - id [integer] : id da entrada no db 
 - id_omdb [integer] : id do filme no [OMDb API](http://www.omdbapi.com)
+- id [integer] : id do user
 - watched [boolean] : **true** para assistido, **false** para *quer assistir*
 - geo [string?] : coordenadas? localização onde filme foi marcado como assistido
 

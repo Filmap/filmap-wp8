@@ -1,6 +1,6 @@
 # The Movie App (temporary name)
 
-**Table of Contents**
+## Table of Contents
 
 - [Introdução](#intro)
 	- [Equipe](#equipe)

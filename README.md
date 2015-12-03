@@ -127,33 +127,50 @@ _____
 
 > [ User ] 1 --- n [ Movie ]
 
-#### <a name="usertable"></a>User
+#### <a name="usertable"></a>Users
 _____
 
-| id 			| user			| name			| email			|
+| id 			| name			| email			| timestamps	|
 | ------------- |:-------------:| :------------:|--------------:|
 | ... 			| ... 			| ... 			| ... 			|
 
 ** Especificação **
 
 - id [integer] : id do user no db
-- user [string] : user para login
 - name [string] : nome do usuario
-- email [string] : email para contato/login
+- email [string] : email para login
+- timestamps [Date] : duas colunas, created_at e updated_at.
+
 
 _____
 
-#### <a name="movietable"></a>Movie
+#### <a name="movietable"></a>Films
 
-| id 			| id_omdb		| user			| geo			| watched		|
-| ------------- |:-------------:| :------------:|:-------------:|--------------:|
-| ... 			| ... 			| ... 			| ... 			| ... 			|
+| id 			| omdb			| user_id		| geo_id		| watched		| timestamps	|
+| ------------- |:-------------:| :------------:|:-------------:|--------------:|--------------:|
+| ... 			| ... 			| ... 			| ... 			| ... 			| ... 			|
 
 ** Especificação **
 
 - id [integer] : id da entrada no db 
-- id_omdb [integer] : id do filme no [OMDb API](http://www.omdbapi.com)
-- id [integer] : id do user
+- omdb [integer] : id do filme no [OMDb API](http://www.omdbapi.com)
+- user_id [integer] : id do user
 - watched [boolean] : **true** para assistido, **false** para *quer assistir*
-- geo [string?] : coordenadas? localização onde filme foi marcado como assistido
+- geo_id [integer] : referência à geo, coordenadas do registro
+- timestamps [Date] : duas colunas, created_at e updated_at.
+
+#### <a name="geotable"></a>Geos
+
+| id 			| lat			| long		| geo_id			| watched		| timestamps	|
+| ------------- |:-------------:| :------------:|:-------------:|--------------:|--------------:|
+| ... 			| ... 			| ... 			| ... 			| ... 			| ... 			|
+
+** Especificação **
+
+- id [integer] : id da entrada no db 
+- omdb [integer] : id do filme no [OMDb API](http://www.omdbapi.com)
+- user_id [integer] : id do user
+- watched [boolean] : **true** para assistido, **false** para *quer assistir*
+- geo_id [integer] : referência à geo, coordenadas do registro
+- timestamps [Date] : duas colunas, created_at e updated_at.
 

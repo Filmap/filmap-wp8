@@ -18,6 +18,7 @@
 	- [Esboço de tabelas](#esboc)
 		- [User](#usertable)
 		- [Movie](#movietable)
+		- [Geo](#geotable)
 
 _____
 
@@ -146,9 +147,9 @@ _____
 
 #### <a name="movietable"></a>Films
 
-| id 			| omdb			| user_id		| geo_id		| watched		| timestamps	|
-| ------------- |:-------------:| :------------:|:-------------:|--------------:|--------------:|
-| ... 			| ... 			| ... 			| ... 			| ... 			| ... 			|
+| id 			| omdb			| user_id		| watched		| timestamps	|
+| ------------- |:-------------:| :------------:|--------------:|--------------:|
+| ... 			| ... 			| ... 			| ... 			| ... 			|
 
 ** Especificação **
 
@@ -161,16 +162,15 @@ _____
 
 #### <a name="geotable"></a>Geos
 
-| id 			| lat			| long		| geo_id			| watched		| timestamps	|
-| ------------- |:-------------:| :------------:|:-------------:|--------------:|--------------:|
-| ... 			| ... 			| ... 			| ... 			| ... 			| ... 			|
+| id 			| lat			| long			| film_id		| timestamps	|
+| ------------- |:-------------:| :------------:|:-------------:|--------------:|
+| ... 			| ... 			| ... 			| ... 			| ... 			|
 
 ** Especificação **
 
 - id [integer] : id da entrada no db 
-- omdb [integer] : id do filme no [OMDb API](http://www.omdbapi.com)
-- user_id [integer] : id do user
-- watched [boolean] : **true** para assistido, **false** para *quer assistir*
-- geo_id [integer] : referência à geo, coordenadas do registro
+- lat [float(10,6)] : latitude
+- lng [float(10,6)] : longitude
+- film_id [integer] : referência à films
 - timestamps [Date] : duas colunas, created_at e updated_at.
 

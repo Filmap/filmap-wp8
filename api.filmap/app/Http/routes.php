@@ -19,3 +19,13 @@ $app->get('/', function () use ($app) {
 $app->get('/key', function() {
     return str_random(32);
 });
+
+/*
+	Get near films based on coordinates
+
+	@param distance, lat, long
+	@return json with omdb_id, (lat, long) and distance
+*/
+$app->get('/near/{distance},{lat},{long}', 'GeoController@filmsAround');
+
+

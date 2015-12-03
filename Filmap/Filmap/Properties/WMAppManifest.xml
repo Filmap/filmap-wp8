@@ -2,7 +2,7 @@
 
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2014/deployment" AppPlatformVersion="8.1">
   <DefaultLanguage xmlns="" code="en-US"/>
-  <App xmlns="" ProductID="{55972e0c-0072-4fd6-a2b1-383325387a08}" Title="Filmap" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="Filmap author" Description="Sample description" SDOptOut ="false" BackUpOptOut ="false" Publisher="Filmap" PublisherID="{475d47da-cd95-4e4c-9494-f00ab8d7f226}">
+  <App xmlns="" ProductID="{423ffacc-a42c-4dc3-b7e8-3a518c5275c0}" Title="Filmap" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="Filmap author" Description="Sample description" SDOptOut ="false" BackUpOptOut ="false" Publisher="Filmap" PublisherID="{c080994b-4b4b-4816-a90f-bf8306d6f61b}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING"/>

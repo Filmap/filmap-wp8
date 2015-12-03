@@ -7,18 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait" Orientation="Portrait"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
         <!-- LOCALIZATION NOTE:
             To localize the displayed strings copy their values to appropriately named
@@ -39,16 +36,60 @@
             CurrentUICulture of the app at run time.
          -->
 
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,0"/>
-            <TextBlock Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
+        <!--Pivot Control-->
+        <phone:Pivot Title="FILMAPP">
+            <!--Pivot item one-->
+            <phone:PivotItem Header="around me">
+                <!--Double line list with text wrapping-->
+                <phone:LongListSelector Name="moviesList" Margin="0,0,-12,0" ItemsSource="{Binding Items}" SelectionChanged="LongListSelector_SelectionChanged">
+                    <phone:LongListSelector.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,17">
+                                <TextBlock Text="{Binding LineOne}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                <TextBlock Text="{Binding LineTwo}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </phone:LongListSelector.ItemTemplate>
+                </phone:LongListSelector>
+            </phone:PivotItem>
 
-        <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <!--Pivot item two-->
+            <phone:PivotItem Header="my movies">
+                <!--Double line list no text wrapping-->
+                <phone:LongListSelector Name="myMoviesDisplayList" Margin="0,0,-12,0" >
+                    <phone:LongListSelector.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,17">
+                                <TextBlock Text="{Binding Title}" TextWrapping="NoWrap" Margin="12,0,0,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                <TextBlock Text="{Binding Plot}" TextWrapping="NoWrap" Margin="12,-6,0,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </phone:LongListSelector.ItemTemplate>
+                </phone:LongListSelector>
+            </phone:PivotItem>
 
-        </Grid>
+            <phone:PivotItem Header="search">
+                <Grid HorizontalAlignment="Left" Height="583" Margin="0,10,0,0" VerticalAlignment="Top" Width="446">
+
+                    <StackPanel  HorizontalAlignment="Left" Height="135" VerticalAlignment="Top">
+                        <TextBox x:Name="txtSearch" TextWrapping="Wrap" Width="456"/>
+                        <Button x:Name="btnSearch" Content="Search" Click="btnSearch_Click" Width="457" />
+                    </StackPanel>
+
+                    <Image x:Name="imgMoviePoster"  Width="180" Source="http://ia.media-imdb.com/images/M/MV5BMTA5MzAzNTcyNjZeQTJeQWpwZ15BbWU3MDUyMzE1MTk@._V1_SX300.jpg" Margin="10,-10,256,10"/>
+                    <StackPanel Margin="207,152,10,169">
+                        <TextBlock x:Name="labelMovieTitle" TextWrapping="Wrap" Text="How I Met Your Mother" FontSize="29.333" FontFamily="Segoe WP Light"/>
+                        <TextBlock x:Name="labelMovieDate" TextWrapping="Wrap" Text="2004-2014" FontSize="24" FontFamily="Segoe WP Light"/>
+                        <TextBlock x:Name="labelMovieDuration" TextWrapping="Wrap" Text="Comedy, Sitcom" FontSize="24" FontFamily="Segoe WP Light"/>
+                        <TextBlock x:Name="labelMovieGenre" TextWrapping="Wrap" Text="U.S.A" FontSize="24" FontFamily="Segoe WP Light"/>
+                        <TextBlock x:Name="labelMovieTags" TextWrapping="Wrap" Text="Calvin Bla, Patrick Du" FontSize="24" FontFamily="Segoe WP Light"/>
+                        <TextBlock x:Name="labelImdbScore" TextWrapping="Wrap" Text="IMDB Score: 8.4" FontSize="24" FontFamily="Segoe WP Light"/>
+                        <ProgressBar Height="30" Value="69" Padding="0" Name="progbarMovieScore" />
+                    </StackPanel>
+                    <TextBlock x:Name="labelMoviePlot" HorizontalAlignment="Left" Margin="10,429,0,0" TextWrapping="Wrap" Text="Yes, my friends. The plot goes here." VerticalAlignment="Top" Height="144" Width="436" FontSize="21.333"/>
+                </Grid>
+            </phone:PivotItem>
+        </phone:Pivot>
 
         <!--Uncomment to see an alignment grid to help ensure your controls are
             aligned on common boundaries.  The image has a top margin of -32px to
@@ -56,7 +97,7 @@
             if the System Tray is hidden.
 
             Before shipping remove this XAML and the image itself.-->
-        <!--<Image Source="/Assets/AlignmentGrid.png" VerticalAlignment="Top" Height="800" Width="480" Margin="0,-32,0,0" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" />-->
+        <!--<Image Source="/Assets/AlignmentGrid.png" VerticalAlignment="Top" Height="800" Width="480" Margin="0,-32,0,0" Grid.Row="0" IsHitTestVisible="False" />-->
     </Grid>
 
 </phone:PhoneApplicationPage>

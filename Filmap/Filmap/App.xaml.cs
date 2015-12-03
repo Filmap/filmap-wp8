@@ -7,11 +7,30 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Filmap.Resources;
+using Filmap.ViewModels;
 
 namespace Filmap
 {
     public partial class App : Application
     {
+        private static MainViewModel viewModel = null;
+
+        /// <summary>
+        /// A static ViewModel used by the views to bind against.
+        /// </summary>
+        /// <returns>The MainViewModel object.</returns>
+        public static MainViewModel ViewModel
+        {
+            get
+            {
+                // Delay creation of the view model until necessary
+                if (viewModel == null)
+                    viewModel = new MainViewModel();
+
+                return viewModel;
+            }
+        }
+
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>
@@ -38,7 +57,7 @@ namespace Filmap
             // Show graphics profiling information while debugging.
             if (Debugger.IsAttached)
             {
-                // Display the current frame rate counters.
+                // Display the current frame rate counters
                 Application.Current.Host.Settings.EnableFrameRateCounter = true;
 
                 // Show the areas of the app that are being redrawn in each frame.
@@ -54,7 +73,6 @@ namespace Filmap
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
-
         }
 
         // Code to execute when a contract activation such as a file open or save picker returns 
@@ -73,6 +91,11 @@ namespace Filmap
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
+            // Ensure that application state is restored appropriately
+            if (!App.ViewModel.IsDataLoaded)
+            {
+                App.ViewModel.LoadData();
+            }
         }
 
         // Code to execute when the application is deactivated (sent to background)
@@ -85,6 +108,7 @@ namespace Filmap
         // This code will not execute when the application is deactivated
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
+            // Ensure that required application state is persisted here.
         }
 
         // Code to execute if a navigation fails

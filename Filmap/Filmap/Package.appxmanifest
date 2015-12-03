@@ -4,12 +4,12 @@
          xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest"
          xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
 
-  <Identity Name="3276f854-eb84-4336-abcc-99f7a10566dc"
+  <Identity Name="55daa353-7d18-469e-b35f-69984504ca7f"
             Publisher="CN=Ivanilson Melo"
             Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="55972e0c-0072-4fd6-a2b1-383325387a08"
-                    PhonePublisherId="475d47da-cd95-4e4c-9494-f00ab8d7f226"/>
+  <mp:PhoneIdentity PhoneProductId="423ffacc-a42c-4dc3-b7e8-3a518c5275c0"
+                    PhonePublisherId="c080994b-4b4b-4816-a90f-bf8306d6f61b"/>
 
   <Properties>
     <DisplayName>Filmap</DisplayName>

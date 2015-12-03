@@ -14,3 +14,8 @@
 $app->get('/', function () use ($app) {
     return $app->welcome();
 });
+
+// Generate application key
+$app->get('/key', function() {
+    return str_random(32);
+});

@@ -72,10 +72,21 @@
                 <Grid HorizontalAlignment="Left" Height="583" Margin="0,10,0,0" VerticalAlignment="Top" Width="446">
 
                     <StackPanel  HorizontalAlignment="Left" Height="135" VerticalAlignment="Top">
-                        <TextBox x:Name="txtSearch" TextWrapping="Wrap" Width="456"/>
-                        <Button x:Name="btnSearch" Content="Search" Click="btnSearch_Click" Width="457" />
+                        <TextBox x:Name="txtSearch" TextWrapping="Wrap" Width="456" TextChanged="txtSearch_TextChanged"/>
                     </StackPanel>
 
+                    <phone:LongListSelector Name="searchMovieDisplayList" Margin="10,65,0,10" SelectionChanged="searchMovieDisplayList_SelectionChanged" >
+                        <phone:LongListSelector.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,17">
+                                    <TextBlock Text="{Binding Title}" TextWrapping="NoWrap" Margin="12,0,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
+                                    <TextBlock Text="{Binding Year}" TextWrapping="NoWrap" Margin="12,-6,0,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </phone:LongListSelector.ItemTemplate>
+                    </phone:LongListSelector>
+
+                    <!--
                     <Image x:Name="imgMoviePoster"  Width="180" Source="http://ia.media-imdb.com/images/M/MV5BMTA5MzAzNTcyNjZeQTJeQWpwZ15BbWU3MDUyMzE1MTk@._V1_SX300.jpg" Margin="10,-10,256,10"/>
                     <StackPanel Margin="207,152,10,169">
                         <TextBlock x:Name="labelMovieTitle" TextWrapping="Wrap" Text="How I Met Your Mother" FontSize="29.333" FontFamily="Segoe WP Light"/>
@@ -87,6 +98,7 @@
                         <ProgressBar Height="30" Value="69" Padding="0" Name="progbarMovieScore" />
                     </StackPanel>
                     <TextBlock x:Name="labelMoviePlot" HorizontalAlignment="Left" Margin="10,429,0,0" TextWrapping="Wrap" Text="Yes, my friends. The plot goes here." VerticalAlignment="Top" Height="144" Width="436" FontSize="21.333"/>
+                    -->    
                 </Grid>
             </phone:PivotItem>
         </phone:Pivot>

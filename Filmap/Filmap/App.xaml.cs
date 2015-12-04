@@ -13,6 +13,8 @@ namespace Filmap
 {
     public partial class App : Application
     {
+        public Movie searchResultMovie { get; set; }
+
         private static MainViewModel viewModel = null;
 
         /// <summary>

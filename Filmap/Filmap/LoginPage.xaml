@@ -42,7 +42,7 @@
             <TextBox x:Name="txtEmail" Grid.Row="1" TextWrapping="Wrap"/>
             <TextBlock x:Name="labelPassword" Grid.Row="2" TextWrapping="Wrap" Text="Password:" Padding="9"/>
             <PasswordBox x:Name="txtPassword" Grid.Row="3"/>
-            <Button x:Name="btnLogin" Grid.Row="4" Content="Login"/>
+            <Button x:Name="btnLogin" Grid.Row="4" Content="Login" Click="btnLogin_Click"/>
 
 
             <!--<TextBox Text="1st row 1st column" TextWrapping="Wrap" Grid.Column="0" Grid.Row="0" />

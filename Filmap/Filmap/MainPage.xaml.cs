@@ -35,6 +35,8 @@ namespace Filmap
             // Binda as ObservableCollections com as listas na tela pra mostrar.
             myMoviesDisplayList.ItemsSource = myMoviesList;
             searchMovieDisplayList.ItemsSource = searchResultList;
+
+
         }
 
         // Load data for the ViewModel Items
@@ -51,6 +53,8 @@ namespace Filmap
             //moviesList.GetType();
             //MessageBox.Show(moviesList.GetValue().ToString());
             //NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            NavigationService.Navigate(new Uri("/RegisterPage.xaml", UriKind.Relative));
+
         }
 
         private async void SearchMovie(String query)

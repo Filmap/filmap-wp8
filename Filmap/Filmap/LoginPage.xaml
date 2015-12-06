@@ -11,7 +11,29 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit">
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn" />
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn" />
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut" />
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut" />
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -27,28 +49,24 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Name="labelEmail" Grid.Row="0" TextWrapping="Wrap" Text="E-mail:" Padding="9"/>
-            <TextBox x:Name="txtEmail" Grid.Row="1" TextWrapping="Wrap"/>
-            <TextBlock x:Name="labelPassword" Grid.Row="2" TextWrapping="Wrap" Text="Password:" Padding="9"/>
-            <PasswordBox x:Name="txtPassword" Grid.Row="3"/>
-            <Button x:Name="btnLogin" Grid.Row="4" Content="Login" Click="btnLogin_Click"/>
+        <Grid x:Name="ContentPanel" Visibility="Visible" Grid.Row="1" Margin="12,0,12,0">
+            <StackPanel>
+                <TextBlock x:Name="labelEmail" Grid.Row="0" TextWrapping="Wrap" Text="E-mail" Margin="11,0,0,0"/>
+                <TextBox x:Name="txtEmail" Grid.Row="1" TextWrapping="Wrap"/>
+                <TextBlock x:Name="labelPassword" TextWrapping="Wrap" Text="Password" Margin="11,0,0,0"/>
+                <PasswordBox x:Name="txtPassword" Grid.Row="3"/>
+                <Button x:Name="btnLogin" Grid.Row="4" Content="Login" Click="btnLogin_Click"/>
+                <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="or" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <Button x:Name="button" Grid.Row="5" Content="I don't have an account." Click="button_Click" />
 
+            </StackPanel>
+        </Grid>
 
-            <!--<TextBox Text="1st row 1st column" TextWrapping="Wrap" Grid.Column="0" Grid.Row="0" />
-            <TextBox Text="3rd row 1st column" TextWrapping="Wrap" Grid.Column="0" Grid.Row="2" />
-            <Button Content="1st row 2nd column" FontSize="17" Grid.Column="1" Grid.Row="0" />
-            <Button Content="3rd row 2nd column" FontSize="17" Grid.Column="1" Grid.Row="2" />-->
+        <Grid x:Name="loadingGrid" Visibility="Collapsed" Grid.Row="1" Margin="12,0,12,0">
+            <StackPanel VerticalAlignment="Center">
+                <ProgressBar x:Name="loadingBar" IsIndeterminate="True"  Height="10" VerticalAlignment="Top" />
+                <TextBlock x:Name="textBlock4" TextWrapping="Wrap" Text="Loading" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </StackPanel>
         </Grid>
     </Grid>
 

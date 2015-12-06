@@ -12,7 +12,30 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    >
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn" />
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn" />
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut" />
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut" />
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -40,13 +63,14 @@
         <phone:Pivot Title="FILMAPP">
             <!--Pivot item one-->
             <phone:PivotItem Header="around me">
+                
                 <!--Double line list with text wrapping-->
-                <phone:LongListSelector Name="moviesList" Margin="0,0,-12,0" ItemsSource="{Binding Items}" SelectionChanged="LongListSelector_SelectionChanged">
+                <phone:LongListSelector Name="aroundMeList" Margin="0,0,-12,0" ItemsSource="{Binding Items}" SelectionChanged="LongListSelector_SelectionChanged">
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,0,0,17">
-                                <TextBlock Text="{Binding LineOne}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                <TextBlock Text="{Binding LineTwo}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                <TextBlock Text="{Binding omdb}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                <TextBlock Text="{Binding distance}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                             </StackPanel>
                         </DataTemplate>
                     </phone:LongListSelector.ItemTemplate>
@@ -56,7 +80,8 @@
             <!--Pivot item two-->
             <phone:PivotItem Header="my movies">
                 <!--Double line list no text wrapping-->
-                <phone:LongListSelector Name="myMoviesDisplayList" Margin="0,0,-12,0" >
+
+                <phone:LongListSelector Name="myMoviesDisplayList" Margin="0,0,-12,0" SelectionChanged="myMoviesDisplayList_SelectionChanged" >
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,0,0,17">
@@ -75,7 +100,7 @@
                         <TextBox x:Name="txtSearch" TextWrapping="Wrap" Width="456" TextChanged="txtSearch_TextChanged"/>
                     </StackPanel>
 
-                    <phone:LongListSelector Name="searchMovieDisplayList" Margin="10,65,0,10" SelectionChanged="searchMovieDisplayList_SelectionChanged" >
+                    <phone:LongListSelector Name="searchMovieDisplayList" Margin="10,69,0,0" SelectionChanged="searchMovieDisplayList_SelectionChanged" >
                         <phone:LongListSelector.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,0,0,17">

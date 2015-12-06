@@ -1,4 +1,4 @@
-# The Movie App (temporary name)
+# Filmap (Windows Phone)
 
 ## Table of Contents
 
@@ -17,14 +17,15 @@
 	- [Checklist de cenários implementados](#checkcen)
 	- [Esboço de tabelas](#esboc)
 		- [User](#usertable)
-		- [Movie](#movietable)
+		- [Film](#filmtable)
 		- [Geo](#geotable)
 
 _____
 
 ## <a name="intro"></a>Introdução
 
-App para a disciplina de Desenvolvimento Mobile (IFRN - 2015.2). 
+App para a disciplina de Desenvolvimento Mobile (IFRN - 2015.2).
+API disponível em [filmap_api](https://github.com/duartefq/filmap_api).
 
 ### <a name="equipe"></a>Equipe
 
@@ -33,7 +34,7 @@ App para a disciplina de Desenvolvimento Mobile (IFRN - 2015.2).
 
 ### <a name="projeto"></a>O projeto
 
-Idealmente um aplicativo de gerencialmento de filmes, com o **The Movie App** os usuários poderão adicionar a uma lista pessoal os filmes que assistiu. Com o app, ele poderá também saber quais filmes outros usuários estão assistindo *ao seu redor*.
+Idealmente um aplicativo de gerencialmento de filmes, com o **Filmap** os usuários poderão adicionar a uma lista pessoal os filmes que assistiu. Com o app, ele poderá também saber quais filmes outros usuários estão assistindo *ao seu redor*.
 
 ## <a name="espec"></a>Especificação
 
@@ -126,7 +127,7 @@ _____
 
 ### <a name="esboc"></a>Esboço de tabelas
 
-> [ User ] 1 --- n [ Movie ]
+> [ User ] 1 --- n [ Film ]
 
 #### <a name="usertable"></a>Users
 _____
@@ -145,7 +146,7 @@ _____
 
 _____
 
-#### <a name="movietable"></a>Films
+#### <a name="filmtable"></a>Films
 
 | id 			| omdb			| user_id		| watched		| timestamps	|
 | ------------- |:-------------:| :------------:|--------------:|--------------:|

@@ -14,6 +14,11 @@ namespace Filmap
     public partial class App : Application
     {
         public Movie searchResultMovie { get; set; }
+        public string filmapApiUrl = "http://apifilmap.ivanilson.xyz";
+        public string omdbApiUrl = "http://www.omdbapi.com";
+        public string accessToken;
+        public string lat;
+        public string lng;
 
         private static MainViewModel viewModel = null;
 
@@ -87,6 +92,7 @@ namespace Filmap
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -146,7 +152,11 @@ namespace Filmap
 
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
-            RootFrame = new PhoneApplicationFrame();
+
+            // use windows phone toolkit root frame to page animations
+            //RootFrame = new PhoneApplicationFrame();
+            RootFrame = new TransitionFrame();
+
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
             // Handle navigation failures

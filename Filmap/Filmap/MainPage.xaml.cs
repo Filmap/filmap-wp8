@@ -12,6 +12,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
+using Windows.Devices.Geolocation;
 
 namespace Filmap
 {
@@ -20,6 +21,9 @@ namespace Filmap
         private string address = "http://www.omdbapi.com";
         public ObservableCollection<Movie> myMoviesList = new ObservableCollection<Movie>();
         public ObservableCollection<Search> searchResultList = new ObservableCollection<Search>();
+
+        private string filmapApiAddress = "http://apifilmap.ivanilson.xyz";
+
 
         // Constructor
         public MainPage()
@@ -46,6 +50,51 @@ namespace Filmap
             {
                 App.ViewModel.LoadData();
             }
+
+            // verifica se existe um token salvo na aplicacao
+            // caso contrario, mostrar pagina de login/cadastro
+            if ((App.Current as App).accessToken == null || (App.Current as App).accessToken == "")
+            {
+                // show login page
+                NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            }
+
+        }
+
+        private async void GetNearbyMovies()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri(filmapApiAddress);
+
+            //String token = "";
+
+            Geolocator geolocator = new Geolocator();
+            geolocator.DesiredAccuracy = PositionAccuracy.High;
+
+            var position = await geolocator.GetGeopositionAsync();
+
+            //MessageBox.Show();
+
+            String lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
+            String lgn = Convert.ToString(position.Coordinate.Point.Position.Longitude);
+
+
+            // 50 eh o raio em kms
+            var response = await httpClient.GetAsync("/near/30," + lat + "," + lgn);
+            var str = response.Content.ReadAsStringAsync().Result;
+
+            MessageBox.Show(lat + "|" + lgn);
+
+            ObservableCollection<NearbyMovie> nearbyMovies = JsonConvert.DeserializeObject<ObservableCollection<NearbyMovie>>(str);
+
+
+            //searchResultList = obj.Search;
+
+            //MessageBox.Show(nearbyMovies.First().omdb);
+
+            aroundMeList.ItemsSource = nearbyMovies;
+
+           // searchMovieDisplayList.ItemsSource = searchResultList;
         }
 
         private void LongListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -53,7 +102,9 @@ namespace Filmap
             //moviesList.GetType();
             //MessageBox.Show(moviesList.GetValue().ToString());
             //NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
-            NavigationService.Navigate(new Uri("/RegisterPage.xaml", UriKind.Relative));
+            // NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            //GetNearbyMovies();
+            //NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
 
         }
 
@@ -169,6 +220,11 @@ namespace Filmap
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             SearchMovie(txtSearch.Text);
+        }
+
+        private void myMoviesDisplayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         // Sample code for building a localized ApplicationBar

@@ -20,13 +20,13 @@
 
             <phone:PivotItem Header="info">
                 <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,0,0">
-                    <Image x:Name="imgMoviePoster" HorizontalAlignment="Left" Height="272" Margin="10,10,0,0" VerticalAlignment="Top" Width="192" Source="http://ia.media-imdb.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg"/>
+                    <Image x:Name="imgMoviePoster" HorizontalAlignment="Left" Height="272" Margin="10,10,0,0" VerticalAlignment="Top" Width="192" Source="http://viooz.la/images/no_poster.png"/>
                     <StackPanel HorizontalAlignment="Left" Height="272" Margin="207,10,0,0" VerticalAlignment="Top" Width="239">
-                        <TextBlock x:Name="txtMovieTitle" TextWrapping="Wrap" Text="Inception" FontSize="32" FontFamily="Segoe WP Light"/>
-                        <TextBlock x:Name="txtMovieYear" TextWrapping="Wrap" Text="2010" FontFamily="Segoe WP Light" FontSize="24"/>
-                        <TextBlock x:Name="txtMovieDuration" TextWrapping="Wrap" Text="148 min" FontFamily="Segoe WP Light" FontSize="24"/>
-                        <TextBlock x:Name="txtMovieGenre" TextWrapping="Wrap" Text="Action, Mystery, Sci-Fi" FontFamily="Segoe WP Light" FontSize="24"/>
-                        <TextBlock x:Name="txtMovieImdbScore" TextWrapping="Wrap" Text="IMDB Score: 8.8" FontFamily="Segoe WP Light" FontSize="24"/>
+                        <TextBlock x:Name="txtMovieTitle" TextWrapping="Wrap" Text="No title available." FontSize="32" FontFamily="Segoe WP Light"/>
+                        <TextBlock x:Name="txtMovieYear" TextWrapping="Wrap" Text="No year info." FontFamily="Segoe WP Light" FontSize="24"/>
+                        <TextBlock x:Name="txtMovieDuration" TextWrapping="Wrap" Text="No duration info." FontFamily="Segoe WP Light" FontSize="24"/>
+                        <TextBlock x:Name="txtMovieGenre" TextWrapping="Wrap" Text="No genre info." FontFamily="Segoe WP Light" FontSize="24"/>
+                        <TextBlock x:Name="txtMovieImdbScore" TextWrapping="Wrap" Text="No score info." FontFamily="Segoe WP Light" FontSize="24"/>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Left" Height="78" Margin="0,287,0,0" VerticalAlignment="Top" Width="456" Orientation="Horizontal">
                         <Button x:Name="button" Content="Watch Later" Width="216" Click="button_Click"/>
@@ -34,7 +34,7 @@
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Left" Height="227" Margin="10,370,0,0" VerticalAlignment="Top" Width="436">
                         <TextBlock x:Name="textBlock5" TextWrapping="Wrap" Text="Synopsis:"/>
-                        <TextBlock x:Name="txtMoviePlot" TextWrapping="Wrap" Text="A thief who steals corporate secrets through use of the dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO." Height="200" Margin="0,0,10,0"/>
+                        <TextBlock x:Name="txtMoviePlot" TextWrapping="Wrap" Text="No synopsis available." Height="200" Margin="0,0,10,0"/>
                     </StackPanel>
                 </Grid>
             </phone:PivotItem>

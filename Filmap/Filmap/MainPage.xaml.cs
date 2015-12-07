@@ -21,6 +21,7 @@ namespace Filmap
         private string address = "http://www.omdbapi.com";
         public ObservableCollection<Movie> myMoviesList = new ObservableCollection<Movie>();
         public ObservableCollection<Search> searchResultList = new ObservableCollection<Search>();
+        //public ObservableCollection<UserMovie> omdbUserMovies = new ObservableCollection<UserMovie>();
 
         private string filmapApiAddress = "http://apifilmap.ivanilson.xyz";
 
@@ -40,28 +41,60 @@ namespace Filmap
             myMoviesDisplayList.ItemsSource = myMoviesList;
             searchMovieDisplayList.ItemsSource = searchResultList;
 
-
+            PopulateMyMoviesList();
         }
 
-        // Load data for the ViewModel Items
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        // popula a lista de filmes do usuario
+        public async void PopulateMyMoviesList()
         {
-            if (!App.ViewModel.IsDataLoaded)
-            {
-                App.ViewModel.LoadData();
-            }
+            // cliente http para acessar a filmap api
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri(filmapApiAddress);
 
-            // verifica se existe um token salvo na aplicacao
-            // caso contrario, mostrar pagina de login/cadastro
-            if ((App.Current as App).accessToken == null || (App.Current as App).accessToken == "")
-            {
-                // show login page
-                NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
-            }
+            // pega todos os filmes marcados pelo usuario atual
+            var response = await httpClient.GetAsync("/films?token=" + (App.Current as App).accessToken);
+            var str = response.Content.ReadAsStringAsync().Result;
 
+            try
+            {
+                // tenta deserializar os filmes do user numa colecao
+                ObservableCollection<UserMovie> omdbUserMovies = JsonConvert.DeserializeObject<ObservableCollection<UserMovie>>(str);
+                
+                // instancia um segundo httpclient para acessar a api omdb
+                HttpClient httpClient2 = new HttpClient();
+                httpClient2.BaseAddress = new Uri((App.Current as App).omdbApiUrl);
+
+                // inverte a ordem dos resultados para mostrar os mais recentes no topo da lista
+                omdbUserMovies = new ObservableCollection<UserMovie>(omdbUserMovies.Reverse());
+
+                // de um em um na lista de filmes do usuario
+                foreach (UserMovie movie in omdbUserMovies) {
+                    // pega detalhes sobre o filme na api omdb no formato json
+                    var omdbresponse = await httpClient2.GetAsync("/?i=" + movie.omdb + "&plot=short&r=json");
+                    var omdbstr = omdbresponse.Content.ReadAsStringAsync().Result;
+
+                    try
+                    {   
+                        // tenta deserializar o json retornado em um objeto do tipo movie
+                        Movie m = JsonConvert.DeserializeObject<Movie>(omdbstr);
+                        // se deserializar com sucesso, insere o objeto na lista para mostrar na tela
+                        myMoviesList.Add(m);
+                    } catch(Exception e)
+                    {
+                        // nao deu para deserializar o filme, printa erro no console
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+            catch (Newtonsoft.Json.JsonSerializationException e)
+            {
+                // nao deu para deserializar a lista de filmes, printa erro no console
+                Console.WriteLine(e.Message);
+            }
         }
 
-        private async void GetNearbyMovies()
+        // popula a lista de filmes assistidos proximo ao usuario
+        private async void PopulateNearbyMoviesList()
         {
             HttpClient httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(filmapApiAddress);
@@ -94,8 +127,28 @@ namespace Filmap
 
             aroundMeList.ItemsSource = nearbyMovies;
 
-           // searchMovieDisplayList.ItemsSource = searchResultList;
+            // searchMovieDisplayList.ItemsSource = searchResultList;
         }
+
+        // Load data for the ViewModel Items
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (!App.ViewModel.IsDataLoaded)
+            {
+                App.ViewModel.LoadData();
+            }
+
+            // verifica se existe um token salvo na aplicacao
+            // caso contrario, mostrar pagina de login/cadastro
+            if ((App.Current as App).accessToken == null || (App.Current as App).accessToken == "")
+            {
+                // show login page
+                NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            }
+
+        }
+
+        
 
         private void LongListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -122,71 +175,6 @@ namespace Filmap
             searchResultList = obj.Search;
 
             searchMovieDisplayList.ItemsSource = searchResultList;
-
-            //MessageBox.Show(Convert.ToString(searchResultList.Count));
-
-
-            //searchMovieDisplayList.ItemsSource = obj.Search;
-
-            /*
-            SearchResultList srl = new SearchResultList();
-
-            SearchResult sr3 = new SearchResult();
-            sr3.Title = "qqqqqqq";
-            sr3.Year = "3214";
-
-            srl.Results.Add(sr3);
-
-            MessageBox.Show(srl.Results.First().Title);
-
-            searchMovieDisplayList.ItemsSource = obj.Results;
-
-            //sear = srl.Results;
-
-
-
-
-            // MessageBox.Show(obj.Results.ToString());
-
-            /*
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(address);
-
-            var response = await httpClient.GetAsync("/?t=" + query + "&y=&plot=short&r=json");
-            var str = response.Content.ReadAsStringAsync().Result;
-
-            Movie obj = JsonConvert.DeserializeObject<Movie>(str);
-
-
-            (App.Current as App).searchResultMovie = obj;
-
-            NavigationService.Navigate(new Uri("/MoviePage.xaml", UriKind.Relative));
-            */
-
-            //this.test = obj.Title;
-
-            //MessageBox.Show(this.test);
-
-            /*
-            labelMovieTitle.Text = obj.Title;
-            labelMovieDate.Text = obj.Year;
-            labelMovieGenre.Text = obj.Genre;
-            labelMovieDuration.Text = obj.Runtime;
-            labelMovieTags.Text = obj.Metascore;
-            labelMoviePlot.Text = obj.Plot;
-
-            labelImdbScore.Text = "IMDB Score: " + obj.imdbRating;
-            
-            
-            BitmapImage img = new BitmapImage();
-            img.UriSource = new Uri(obj.Poster);
-            imgMoviePoster.Source = img;
-
-            myMoviesList.Add(obj);
-            */
-
-
-            //MessageBox.Show(obj.Title + " - " + obj.Year);
         }
 
         private void searchMovieDisplayList_SelectionChanged(object sender, SelectionChangedEventArgs e)

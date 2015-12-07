@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="Search.cs" />
     <Compile Include="SearchList.cs" />
+    <Compile Include="UserMovie.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
   </ItemGroup>

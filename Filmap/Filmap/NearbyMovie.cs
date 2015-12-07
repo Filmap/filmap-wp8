@@ -13,6 +13,7 @@ namespace Filmap
         public string lat { get; set; }
         public string lng { get; set; }
         public string distance { get; set; }
+        public Movie omdbMovie { get; set; }
     }
 
 }

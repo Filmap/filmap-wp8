@@ -78,29 +78,32 @@
             </phone:PivotItem>
 
             <!--Pivot item two-->
-            <phone:PivotItem Header="my movies">
+            <phone:PivotItem Header="my movies" Margin="12,0">
                 <!--Double line list no text wrapping-->
-
-                <phone:LongListSelector Name="myMoviesDisplayList" Margin="0,0,-12,0" SelectionChanged="myMoviesDisplayList_SelectionChanged" >
+                <Grid Margin="10">
+                    <phone:LongListSelector Name="myMoviesDisplayList" SelectionChanged="myMoviesDisplayList_SelectionChanged" >
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,0,0,17">
                                 <TextBlock Text="{Binding Title}" TextWrapping="NoWrap" Margin="12,0,0,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                <TextBlock Text="{Binding Plot}" TextWrapping="NoWrap" Margin="12,-6,0,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                    <TextBlock Text="{Binding Genre}" TextWrapping="NoWrap" Margin="12,-6,0,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                             </StackPanel>
                         </DataTemplate>
                     </phone:LongListSelector.ItemTemplate>
                 </phone:LongListSelector>
+                </Grid>
+
+                
             </phone:PivotItem>
 
-            <phone:PivotItem Header="search">
+            <phone:PivotItem Header="search" Margin="10,10,10,11">
                 <Grid HorizontalAlignment="Left" Height="583" Margin="0,10,0,0" VerticalAlignment="Top" Width="446">
 
                     <StackPanel  HorizontalAlignment="Left" Height="135" VerticalAlignment="Top">
-                        <TextBox x:Name="txtSearch" TextWrapping="Wrap" Width="456" TextChanged="txtSearch_TextChanged"/>
+                        <TextBox x:Name="txtSearch" TextWrapping="Wrap" Width="461" TextChanged="txtSearch_TextChanged"/>
                     </StackPanel>
 
-                    <phone:LongListSelector Name="searchMovieDisplayList" Margin="10,69,0,0" SelectionChanged="searchMovieDisplayList_SelectionChanged" >
+                    <phone:LongListSelector Name="searchMovieDisplayList" Margin="10,59,0,10" SelectionChanged="searchMovieDisplayList_SelectionChanged" >
                         <phone:LongListSelector.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,0,0,17">

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Filmap
 {
-    public class Movie
+    public class Movie : IEquatable<Movie>
     {
         public string Title { get; set; }
         public string Year { get; set; }
@@ -28,5 +28,12 @@ namespace Filmap
         public string imdbID { get; set; }
         public string Type { get; set; }
         public string Response { get; set; }
+
+        public bool Equals(Movie other)
+        {
+            return this.imdbID == other.imdbID;
+        }
     }
+
+    
 }

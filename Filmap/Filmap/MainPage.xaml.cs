@@ -18,12 +18,10 @@ namespace Filmap
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        private string address = "http://www.omdbapi.com";
         //public ObservableCollection<Movie> myMoviesList = new ObservableCollection<Movie>();
         public ObservableCollection<Search> searchResultList = new ObservableCollection<Search>();
         //public ObservableCollection<NearbyMovie> nearbyMovies = new ObservableCollection<NearbyMovie>();
 
-        private string filmapApiAddress = "http://apifilmap.ivanilson.xyz";
 
 
         // Constructor
@@ -36,17 +34,30 @@ namespace Filmap
 
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
-            
+
             // Binda as ObservableCollections com as listas na tela pra mostrar.
+
+
+
+
+            // call method as standard method
+            //
+
+            StartAndPopulateLists();
+            
+        }
+
+        public async void StartAndPopulateLists()
+        {
             myMoviesDisplayList.ItemsSource = (App.Current as App).myMoviesList;
             searchMovieDisplayList.ItemsSource = searchResultList;
+            aroundMeList.ItemsSource = (App.Current as App).nearbyMovies;
 
-            GetUserLocation();
-
-            PopulateNearbyMoviesList();
             PopulateMyMoviesList();
 
+            await (App.Current as App).GetUserLocation();
 
+            PopulateNearbyMoviesList();
         }
 
         // popula a lista de filmes do usuario
@@ -54,7 +65,7 @@ namespace Filmap
         {
             // cliente http para acessar a filmap api
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(filmapApiAddress);
+            httpClient.BaseAddress = new Uri((App.Current as App).filmapApiUrl);
 
             // pega todos os filmes marcados pelo usuario atual
             var response = await httpClient.GetAsync("/films?token=" + (App.Current as App).accessToken);
@@ -104,23 +115,14 @@ namespace Filmap
             }
         }
 
-        private async void GetUserLocation()
-        {
-            Geolocator geolocator = new Geolocator();
-            geolocator.DesiredAccuracy = PositionAccuracy.High;
-
-            var position = await geolocator.GetGeopositionAsync();
-
-            //MessageBox.Show();
-            (App.Current as App).lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
-            (App.Current as App).lng = Convert.ToString(position.Coordinate.Point.Position.Longitude);
-        }
 
         // popula a lista de filmes assistidos proximo ao usuario
         private async void PopulateNearbyMoviesList()
         {
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(filmapApiAddress);
+            httpClient.BaseAddress = new Uri((App.Current as App).filmapApiUrl);
+
+            //if ((App.Current as App).GetUserLocation().)
 
             String lat = (App.Current as App).lat;
             String lng = (App.Current as App).lng;
@@ -130,13 +132,7 @@ namespace Filmap
                 // location is set, do nothing
             } else
             {
-                Geolocator geolocator = new Geolocator();
-                geolocator.DesiredAccuracy = PositionAccuracy.High;
-
-                var position = await geolocator.GetGeopositionAsync();
-
-                lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
-                lng = Convert.ToString(position.Coordinate.Point.Position.Longitude);
+                await (App.Current as App).GetUserLocation();
             }
 
             // 15 eh o raio em kms
@@ -145,13 +141,26 @@ namespace Filmap
 
             //MessageBox.Show(lat + "|" + lng);
 
-            ObservableCollection<NearbyMovie> nearbyMovies = JsonConvert.DeserializeObject<ObservableCollection<NearbyMovie>>(str);
+            try
+            {
+                ObservableCollection<NearbyMovie> nearbyMv = JsonConvert.DeserializeObject<ObservableCollection<NearbyMovie>>(str);
+                //aroundMeList.ItemsSource = nearbyMovies;
 
+                foreach(NearbyMovie movie in nearbyMv)
+                {
+                    (App.Current as App).nearbyMovies.Add(movie);   
+                    //MessageBox.Show(movie.omdb);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
             //searchResultList = obj.Search;
 
             //MessageBox.Show(nearbyMovies.First().omdb);
 
-            aroundMeList.ItemsSource = nearbyMovies;
 
             // searchMovieDisplayList.ItemsSource = searchResultList;
         }
@@ -177,35 +186,20 @@ namespace Filmap
 
         }
 
-        
-
-        private void LongListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //moviesList.GetType();
-            //MessageBox.Show(moviesList.GetValue().ToString());
-            //NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
-            // NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
-            //GetNearbyMovies();
-            //NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
-
-        }
-
         private async void SearchMovie(String query)
         {
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(address);
+            httpClient.BaseAddress = new Uri((App.Current as App).omdbApiUrl);
 
             var response = await httpClient.GetAsync("?s=" + query + "&r=json");
             var str = response.Content.ReadAsStringAsync().Result;
 
             SearchList obj = JsonConvert.DeserializeObject<SearchList>(str);
 
-
             searchResultList = obj.Search;
-
             searchMovieDisplayList.ItemsSource = searchResultList;
         }
-
+ 
         private void searchMovieDisplayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Search s = (Search) searchMovieDisplayList.SelectedItem;
@@ -218,7 +212,7 @@ namespace Filmap
         private async void OpenMovie(String imdbid)
         {
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(address);
+            httpClient.BaseAddress = new Uri((App.Current as App).omdbApiUrl);
 
             var response = await httpClient.GetAsync("/?i=" + imdbid + "&y=&plot=short&r=json");
             var str = response.Content.ReadAsStringAsync().Result;
@@ -239,9 +233,23 @@ namespace Filmap
             SearchMovie(txtSearch.Text);
         }
 
+
         private void myMoviesDisplayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //PopulateNearbyMoviesList();
+            Movie mv = (Movie)myMoviesDisplayList.SelectedItem;
 
+            String omdbid = mv.imdbID;
+            NavigationService.Navigate(new Uri("/MoviePage.xaml?omdbid=" + omdbid, UriKind.Relative));
+        }
+
+        private void aroundMeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //PopulateNearbyMoviesList();
+            NearbyMovie nm = (NearbyMovie)aroundMeList.SelectedItem;
+
+            String omdbid = nm.omdb;
+            NavigationService.Navigate(new Uri("/MoviePage.xaml?omdbid=" + omdbid, UriKind.Relative));
         }
 
         // Sample code for building a localized ApplicationBar

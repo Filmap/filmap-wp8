@@ -11,48 +11,90 @@ using System.Windows.Media.Imaging;
 using System.Net.Http;
 using Windows.Devices.Geolocation;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace Filmap
 {
     public partial class MoviePage : PhoneApplicationPage
     {
-        public Movie searchResultMovieLocal;
+        private Movie currentDisplayMovie;
 
         public MoviePage()
         {
             InitializeComponent();
+        }
 
-            // populate fields on movie page
-            searchResultMovieLocal = (App.Current as App).searchResultMovie;
-            txtMovieTitle.Text = searchResultMovieLocal.Title;
-            txtMovieDuration.Text = searchResultMovieLocal.Runtime;
-            txtMovieGenre.Text = searchResultMovieLocal.Genre;
-            txtMovieYear.Text = searchResultMovieLocal.Year;
-            txtMovieImdbScore.Text = searchResultMovieLocal.imdbRating + "/10 on IMDB";
-            txtMoviePlot.Text = searchResultMovieLocal.Plot;
-            txtMovieType.Text = searchResultMovieLocal.Type;
-            txtMovieRated.Text = "Rated " + searchResultMovieLocal.Rated;
-            labelActors.Text = searchResultMovieLocal.Actors;
-            labelWriter.Text = searchResultMovieLocal.Director;
-            labelDirector.Text = searchResultMovieLocal.Director;
-            txtMovieReleased.Text = searchResultMovieLocal.Released;
-            txtMovieLanguage.Text = searchResultMovieLocal.Language;
-            txtMovieCountry.Text = searchResultMovieLocal.Country;
-            txtMovieAwards.Text = searchResultMovieLocal.Awards;
-            txtMovieMetascore.Text = searchResultMovieLocal.Metascore + " out of 100";
-            txtMovieImdb.Text = searchResultMovieLocal.imdbRating + " out of 10";
-            txtImdbVotes.Text = searchResultMovieLocal.imdbVotes;
+        private void PopulateMovieFields(Movie movie)
+        {
+            txtMovieTitle.Text = movie.Title;
+            txtMovieDuration.Text = movie.Runtime;
+            txtMovieGenre.Text = movie.Genre;
+            txtMovieYear.Text = movie.Year;
+            txtMovieImdbScore.Text = movie.imdbRating + "/10 on IMDB";
+            txtMoviePlot.Text = movie.Plot;
+            txtMovieType.Text = movie.Type;
+            txtMovieRated.Text = "Rated " + movie.Rated;
+            labelActors.Text = movie.Actors;
+            labelWriter.Text = movie.Director;
+            labelDirector.Text = movie.Director;
+            txtMovieReleased.Text = movie.Released;
+            txtMovieLanguage.Text = movie.Language;
+            txtMovieCountry.Text = movie.Country;
+            txtMovieAwards.Text = movie.Awards;
+            txtMovieMetascore.Text = movie.Metascore + " out of 100";
+            txtMovieImdb.Text = movie.imdbRating + " out of 10";
+            txtImdbVotes.Text = movie.imdbVotes;
 
             // get movie poster and show on movie page if there is a poster
-            if (searchResultMovieLocal.Poster != "N/A")
+            if (movie.Poster != "N/A")
             {
                 BitmapImage imgPoster = new BitmapImage();
-                imgPoster.UriSource = new Uri(searchResultMovieLocal.Poster);
+                imgPoster.UriSource = new Uri(movie.Poster);
                 imgMoviePoster.Source = imgPoster;
             }
 
             // set pivot title
-            pivotTitle.Title = searchResultMovieLocal.Title;
+            pivotTitle.Title = movie.Title;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var dic = NavigationContext.QueryString;
+            if (dic.ContainsKey("omdbid"))
+            {
+                GetMovie(dic["omdbid"]);
+            } else
+            {
+                currentDisplayMovie = (App.Current as App).searchResultMovie;
+                PopulateMovieFields(currentDisplayMovie);
+            }
+        }
+
+        private async void GetMovie(String imdbid)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri((App.Current as App).omdbApiUrl);
+
+            var response = await httpClient.GetAsync("/?i=" + imdbid + "&y=&plot=short&r=json");
+            var str = response.Content.ReadAsStringAsync().Result;
+
+            try
+            {
+                Movie obj = JsonConvert.DeserializeObject<Movie>(str);
+                currentDisplayMovie = obj;
+                PopulateMovieFields(obj);
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                MessageBox.Show("There was an error in your request. Try again with a different movie.");
+                // erro ao popular fields go back
+                if (NavigationService.CanGoBack)
+                    NavigationService.GoBack();
+
+            }
+            
+
+
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -88,18 +130,12 @@ namespace Filmap
             }
             else
             {
-                Geolocator geolocator = new Geolocator();
-                geolocator.DesiredAccuracy = PositionAccuracy.High;
-
-                var position = await geolocator.GetGeopositionAsync();
-
-                lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
-                lng = Convert.ToString(position.Coordinate.Point.Position.Longitude);
+                await (App.Current as App).GetUserLocation();
             }
 
             //MessageBox.Show(Regex.Match(searchResultMovieLocal.imdbID, @"\d+").Value);
 
-            String omdbId = Regex.Match(searchResultMovieLocal.imdbID, @"\d+").Value;
+            String omdbId = Regex.Match(currentDisplayMovie.imdbID, @"\d+").Value;
 
             // zero for watch later, one for watching now (or watched)
             String watchedstatus = "0";
@@ -111,7 +147,7 @@ namespace Filmap
 
             // prepara os parametros para mandar no post request
             var credentials = new FormUrlEncodedContent(new[] {
-                new KeyValuePair<string, string>("omdb", searchResultMovieLocal.imdbID), 
+                new KeyValuePair<string, string>("omdb", currentDisplayMovie.imdbID), 
                 new KeyValuePair<string, string>("watched", watchedstatus), // zero or one
                 new KeyValuePair<string, string>("lat", lat),
                 new KeyValuePair<string, string>("lng", lng)
@@ -142,7 +178,7 @@ namespace Filmap
                     button.Content = "Ok, later. :)";
                 }
                 
-                (App.Current as App).myMoviesList.Insert(0, searchResultMovieLocal);
+                (App.Current as App).myMoviesList.Insert(0, currentDisplayMovie);
             } else
             {
                 // some error ocourred 

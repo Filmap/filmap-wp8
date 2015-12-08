@@ -9,6 +9,8 @@ using Microsoft.Phone.Shell;
 using Filmap.Resources;
 using Filmap.ViewModels;
 using System.Collections.ObjectModel;
+using Windows.Devices.Geolocation;
+using System.Threading.Tasks;
 
 namespace Filmap
 {
@@ -94,6 +96,18 @@ namespace Filmap
         // with the picked file or other return values
         private void Application_ContractActivated(object sender, Windows.ApplicationModel.Activation.IActivatedEventArgs e)
         {
+        }
+
+        public async Task GetUserLocation()
+        {
+            Geolocator geolocator = new Geolocator();
+            geolocator.DesiredAccuracy = PositionAccuracy.High;
+
+            var position = await geolocator.GetGeopositionAsync();
+
+            //MessageBox.Show();
+            (App.Current as App).lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
+            (App.Current as App).lng = Convert.ToString(position.Coordinate.Point.Position.Longitude);
         }
 
         // Code to execute when the application is launching (eg, from Start)

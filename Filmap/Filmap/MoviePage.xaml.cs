@@ -12,6 +12,8 @@ using System.Net.Http;
 using Windows.Devices.Geolocation;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Filmap.Models;
+using System.Threading.Tasks;
 
 namespace Filmap
 {
@@ -48,8 +50,9 @@ namespace Filmap
 
             if ((App.Current as App).myMoviesList.Contains(movie))
             {
-                MessageBox.Show("movie");
+                ChangeButtonsStatuses(movie).ConfigureAwait(true);
             }
+
 
             // get movie poster and show on movie page if there is a poster
             if (movie.Poster != "N/A")
@@ -60,7 +63,43 @@ namespace Filmap
             }
 
             // set pivot title
-            pivotTitle.Title = movie.Title;
+            pivotMovie.Title = movie.Title;
+
+            progressLoadingMovie.Visibility = Visibility.Collapsed;
+            pivotMovie.Visibility = Visibility.Visible;
+        }
+
+        private async Task ChangeButtonsStatuses(Movie movie)
+        {
+            //MessageBox.Show("movie");
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri((App.Current as App).filmapApiUrl);
+
+            var response = await httpClient.GetAsync("/films/" + movie.imdbID + "?token=" + (App.Current as App).accessToken);
+            var str = response.Content.ReadAsStringAsync().Result;
+
+            try
+            {
+                FilmapFilm film = JsonConvert.DeserializeObject<FilmapFilm>(str);
+
+                if (film.watched == 1)
+                {
+                    button1.Content = "Watched";
+                    button1.IsEnabled = false;
+                    button.IsEnabled = false;
+                }
+                else if (film.watched == 0)
+                {
+                    button.IsEnabled = false;
+                    button.Content = "Watch later";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -146,9 +185,32 @@ namespace Filmap
             // zero for watch later, one for watching now (or watched)
             String watchedstatus = "0";
 
+            // get user access token
+            String token = (App.Current as App).accessToken;
+
             if (watched)
             {
+                if ((App.Current as App).myMoviesList.Contains(currentDisplayMovie))
+                {
+                    var resp = await httpClient.PostAsync("/films/" + currentDisplayMovie.imdbID + "/watch?token=" + token, null);
+
+                    //MessageBox.Show(resp.StatusCode.ToString());
+
+                    /*
+                    if (resp.IsSuccessStatusCode)
+                    {
+                    */
+                        button1.IsEnabled = false;
+                        button1.Content = "Watched.";
+                        return;
+                    /*
+                    }
+                    */
+
+                }
+
                 watchedstatus = "1";
+                
             }
 
             // prepara os parametros para mandar no post request
@@ -158,9 +220,6 @@ namespace Filmap
                 new KeyValuePair<string, string>("lat", lat),
                 new KeyValuePair<string, string>("lng", lng)
             });
-
-            // get user access token
-            String token = (App.Current as App).accessToken;
 
             // faz um post request e espera o resultado asincronamente
             var response = await httpClient.PostAsync("/films?token=" + token, credentials);

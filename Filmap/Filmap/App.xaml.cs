@@ -11,6 +11,9 @@ using Filmap.ViewModels;
 using System.Collections.ObjectModel;
 using Windows.Devices.Geolocation;
 using System.Threading.Tasks;
+using System.IO.IsolatedStorage;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace Filmap
 {
@@ -21,8 +24,8 @@ namespace Filmap
         public string omdbApiUrl = "http://www.omdbapi.com";
         
         // FOR DEVELOPMENT ONLY, REMOVES THE LOG IN SCREEN AND LOGS IN AS IVANILSON
-        public string accessToken = " eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiaXNzIjoiaHR0cDpcL1wvYXBpZmlsbWFwLml2YW5pbHNvbi54eXpcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ0OTQ0NDgyNiwiZXhwIjoxNDUwMDQ5NjI2LCJuYmYiOjE0NDk0NDQ4MjYsImp0aSI6IjljZWU2ZDUxYTcyZjA1YzU4MTBiZmNlOGUxMmJiMDdjIn0.nQqsP6lS2qAnlilW1-cpVtcL-EiGCj05Ckap7exl2Nw";
-        //public string accessToken; // <- FOR PRODUCTION
+        //public string accessToken = " eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiaXNzIjoiaHR0cDpcL1wvYXBpZmlsbWFwLml2YW5pbHNvbi54eXpcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ0OTQ0NDgyNiwiZXhwIjoxNDUwMDQ5NjI2LCJuYmYiOjE0NDk0NDQ4MjYsImp0aSI6IjljZWU2ZDUxYTcyZjA1YzU4MTBiZmNlOGUxMmJiMDdjIn0.nQqsP6lS2qAnlilW1-cpVtcL-EiGCj05Ckap7exl2Nw";
+        public string accessToken; // <- FOR PRODUCTION
 
         public string lat;
         public string lng;
@@ -90,12 +93,69 @@ namespace Filmap
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
+            
+
         }
 
         // Code to execute when a contract activation such as a file open or save picker returns 
         // with the picked file or other return values
         private void Application_ContractActivated(object sender, Windows.ApplicationModel.Activation.IActivatedEventArgs e)
         {
+        }
+
+        public void GetTokenFromFile()
+        {
+            IsolatedStorageFile file;
+            IsolatedStorageFileStream stream;
+            XmlSerializer xml;
+
+            using (file = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                if (file.FileExists("Filmap.xml"))
+                using (stream = file.OpenFile("Filmap.xml", FileMode.Open))
+                {
+                    xml = new XmlSerializer(typeof(Token));
+                    Token t = (Token) xml.Deserialize(stream);
+                    
+
+                    if (t.token != null)
+                        accessToken = t.token;
+                    ///foreach (Contato c in (Contatos) xml.Deserialize(stream))
+                    ///agenda.Add(c);
+                    //MessageBox.Show("token recuperado: " + t.token);
+                }
+            }
+        }
+
+        public void SaveTokenOnFile()
+        {
+            IsolatedStorageFile file;
+            IsolatedStorageFileStream stream;
+            XmlSerializer xml;
+
+            using(file = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                using (stream = file.OpenFile("Filmap.xml", FileMode.Create))
+                {
+                    xml = new XmlSerializer(typeof(Token));
+                    xml.Serialize(stream, new Token { token = (App.Current as App).accessToken });
+
+                    //MessageBox.Show("token salvo");
+
+               
+                }
+            }
+        }
+
+        public void DeleteTokenFile()
+        {
+            IsolatedStorageFile file;
+
+            using (file = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                file.DeleteFile("Filmap.xml");
+
+            }
         }
 
         public async Task GetUserLocation()
@@ -114,7 +174,7 @@ namespace Filmap
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-            
+            GetTokenFromFile();
         }
 
         // Code to execute when the application is activated (brought to foreground)

@@ -14,6 +14,7 @@ namespace Filmap
         public string lng { get; set; }
         public string distance { get; set; }
         public Movie omdbMovie { get; set; }
+        public string title { get; set; }
     }
 
 }

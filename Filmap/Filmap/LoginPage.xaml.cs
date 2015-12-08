@@ -58,6 +58,15 @@ namespace Filmap
                 // salva o token ma memoria do aplicativo para usar depois
                 (App.Current as App).accessToken = t.token;
 
+            
+                (App.Current as App).SaveTokenOnFile();
+
+                var dic = NavigationContext.QueryString;
+                if (dic.ContainsKey("email"))
+                {
+                    txtEmail.Text = dic["email"];
+                }
+
                 // vai para a pagina inicial do app
                 NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
             }

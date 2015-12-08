@@ -81,32 +81,38 @@ namespace Filmap
                 httpClient2.BaseAddress = new Uri((App.Current as App).omdbApiUrl);
 
                 // inverte a ordem dos resultados para mostrar os mais recentes no topo da lista
-                omdbUserMovies = new ObservableCollection<UserMovie>(omdbUserMovies.Reverse());
+                if (omdbUserMovies != null)
+                {
+                    omdbUserMovies = new ObservableCollection<UserMovie>(omdbUserMovies.Reverse());
 
-                // de um em um na lista de filmes do usuario
-                foreach (UserMovie movie in omdbUserMovies) {
-                    // pega detalhes sobre o filme na api omdb no formato json
-                    var omdbresponse = await httpClient2.GetAsync("/?i=" + movie.omdb + "&plot=short&r=json");
-                    var omdbstr = omdbresponse.Content.ReadAsStringAsync().Result;
-
-                    try
-                    {   
-                        // tenta deserializar o json retornado em um objeto do tipo movie
-                        Movie m = JsonConvert.DeserializeObject<Movie>(omdbstr);
-                        // se deserializar com sucesso, insere o objeto na lista para mostrar na tela
-
-                        // checa se o objeto resposta tem pelo menos um titulo para mostrar na lista
-                        if (m.Title != null)
-                        {
-                            (App.Current as App).myMoviesList.Add(m);
-                        }
-                        
-                    } catch(Exception e)
+                    // de um em um na lista de filmes do usuario
+                    foreach (UserMovie movie in omdbUserMovies)
                     {
-                        // nao deu para deserializar o filme, printa erro no console
-                        Console.WriteLine(e.Message);
+                        // pega detalhes sobre o filme na api omdb no formato json
+                        var omdbresponse = await httpClient2.GetAsync("/?i=" + movie.omdb + "&plot=short&r=json");
+                        var omdbstr = omdbresponse.Content.ReadAsStringAsync().Result;
+
+                        try
+                        {
+                            // tenta deserializar o json retornado em um objeto do tipo movie
+                            Movie m = JsonConvert.DeserializeObject<Movie>(omdbstr);
+                            // se deserializar com sucesso, insere o objeto na lista para mostrar na tela
+
+                            // checa se o objeto resposta tem pelo menos um titulo para mostrar na lista
+                            if (m.Title != null)
+                            {
+                                (App.Current as App).myMoviesList.Add(m);
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            // nao deu para deserializar o filme, printa erro no console
+                            Console.WriteLine(e.Message);
+                        }
                     }
                 }
+                
             }
             catch (Newtonsoft.Json.JsonSerializationException e)
             {
@@ -146,11 +152,32 @@ namespace Filmap
                 ObservableCollection<NearbyMovie> nearbyMv = JsonConvert.DeserializeObject<ObservableCollection<NearbyMovie>>(str);
                 //aroundMeList.ItemsSource = nearbyMovies;
 
-                foreach(NearbyMovie movie in nearbyMv)
+                foreach (NearbyMovie movie in nearbyMv)
                 {
+                    HttpClient httpClient3 = new HttpClient();
+                    httpClient3.BaseAddress = new Uri((App.Current as App).omdbApiUrl);
+
+                    var omdbresponse = await httpClient3.GetAsync("/?i=" + movie.omdb + "&plot=short&r=json");
+                    var omdbstr = omdbresponse.Content.ReadAsStringAsync().Result;
+
+                    try
+                    {
+                        // tenta deserializar o json retornado em um objeto do tipo movie
+                        Movie m = JsonConvert.DeserializeObject<Movie>(omdbstr);
+
+                        movie.title = m.Title;
+                    } catch (Exception e)
+                    {
+                        Console.WriteLine(e.StackTrace);
+                    }
+
+
                     (App.Current as App).nearbyMovies.Add(movie);   
                     //MessageBox.Show(movie.omdb);
                 }
+
+                loadingAroundMePanel.Visibility = Visibility.Collapsed;
+                aroundMeList.Visibility = Visibility.Visible;
 
             }
             catch (Exception e)
@@ -181,7 +208,7 @@ namespace Filmap
                 NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
             } else
             {
-                // user logado                
+                // user logado
             }
 
         }
@@ -230,7 +257,7 @@ namespace Filmap
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SearchMovie(txtSearch.Text);
+            SearchMovie(txtSearch.Text.Trim());
         }
 
 
@@ -250,6 +277,14 @@ namespace Filmap
 
             String omdbid = nm.omdb;
             NavigationService.Navigate(new Uri("/MoviePage.xaml?omdbid=" + omdbid, UriKind.Relative));
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            (App.Current as App).DeleteTokenFile();
+            while (NavigationService.CanGoBack)
+                NavigationService.RemoveBackEntry();
+            NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
         }
 
         // Sample code for building a localized ApplicationBar

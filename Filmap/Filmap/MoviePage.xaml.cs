@@ -45,6 +45,12 @@ namespace Filmap
             txtMovieImdb.Text = movie.imdbRating + " out of 10";
             txtImdbVotes.Text = movie.imdbVotes;
 
+
+            if ((App.Current as App).myMoviesList.Contains(movie))
+            {
+                MessageBox.Show("movie");
+            }
+
             // get movie poster and show on movie page if there is a poster
             if (movie.Poster != "N/A")
             {

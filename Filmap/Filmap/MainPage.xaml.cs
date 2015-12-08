@@ -19,9 +19,9 @@ namespace Filmap
     public partial class MainPage : PhoneApplicationPage
     {
         private string address = "http://www.omdbapi.com";
-        public ObservableCollection<Movie> myMoviesList = new ObservableCollection<Movie>();
+        //public ObservableCollection<Movie> myMoviesList = new ObservableCollection<Movie>();
         public ObservableCollection<Search> searchResultList = new ObservableCollection<Search>();
-        //public ObservableCollection<UserMovie> omdbUserMovies = new ObservableCollection<UserMovie>();
+        //public ObservableCollection<NearbyMovie> nearbyMovies = new ObservableCollection<NearbyMovie>();
 
         private string filmapApiAddress = "http://apifilmap.ivanilson.xyz";
 
@@ -38,10 +38,15 @@ namespace Filmap
             //BuildLocalizedApplicationBar();
             
             // Binda as ObservableCollections com as listas na tela pra mostrar.
-            myMoviesDisplayList.ItemsSource = myMoviesList;
+            myMoviesDisplayList.ItemsSource = (App.Current as App).myMoviesList;
             searchMovieDisplayList.ItemsSource = searchResultList;
 
+            GetUserLocation();
+
+            PopulateNearbyMoviesList();
             PopulateMyMoviesList();
+
+
         }
 
         // popula a lista de filmes do usuario
@@ -78,7 +83,13 @@ namespace Filmap
                         // tenta deserializar o json retornado em um objeto do tipo movie
                         Movie m = JsonConvert.DeserializeObject<Movie>(omdbstr);
                         // se deserializar com sucesso, insere o objeto na lista para mostrar na tela
-                        myMoviesList.Add(m);
+
+                        // checa se o objeto resposta tem pelo menos um titulo para mostrar na lista
+                        if (m.Title != null)
+                        {
+                            (App.Current as App).myMoviesList.Add(m);
+                        }
+                        
                     } catch(Exception e)
                     {
                         // nao deu para deserializar o filme, printa erro no console
@@ -93,33 +104,48 @@ namespace Filmap
             }
         }
 
-        // popula a lista de filmes assistidos proximo ao usuario
-        private async void PopulateNearbyMoviesList()
+        private async void GetUserLocation()
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(filmapApiAddress);
-
-            //String token = "";
-
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracy = PositionAccuracy.High;
 
             var position = await geolocator.GetGeopositionAsync();
 
             //MessageBox.Show();
+            (App.Current as App).lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
+            (App.Current as App).lng = Convert.ToString(position.Coordinate.Point.Position.Longitude);
+        }
 
-            String lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
-            String lgn = Convert.ToString(position.Coordinate.Point.Position.Longitude);
+        // popula a lista de filmes assistidos proximo ao usuario
+        private async void PopulateNearbyMoviesList()
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri(filmapApiAddress);
 
+            String lat = (App.Current as App).lat;
+            String lng = (App.Current as App).lng;
 
-            // 50 eh o raio em kms
-            var response = await httpClient.GetAsync("/near/30," + lat + "," + lgn);
+            if (lat != null && lng != null)
+            {
+                // location is set, do nothing
+            } else
+            {
+                Geolocator geolocator = new Geolocator();
+                geolocator.DesiredAccuracy = PositionAccuracy.High;
+
+                var position = await geolocator.GetGeopositionAsync();
+
+                lat = Convert.ToString(position.Coordinate.Point.Position.Latitude);
+                lng = Convert.ToString(position.Coordinate.Point.Position.Longitude);
+            }
+
+            // 15 eh o raio em kms
+            var response = await httpClient.GetAsync("/near/15," + lat + "," + lng);
             var str = response.Content.ReadAsStringAsync().Result;
 
-            MessageBox.Show(lat + "|" + lgn);
+            //MessageBox.Show(lat + "|" + lng);
 
             ObservableCollection<NearbyMovie> nearbyMovies = JsonConvert.DeserializeObject<ObservableCollection<NearbyMovie>>(str);
-
 
             //searchResultList = obj.Search;
 
@@ -144,6 +170,9 @@ namespace Filmap
             {
                 // show login page
                 NavigationService.Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            } else
+            {
+                // user logado                
             }
 
         }

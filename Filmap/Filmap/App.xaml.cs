@@ -8,6 +8,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Filmap.Resources;
 using Filmap.ViewModels;
+using System.Collections.ObjectModel;
 
 namespace Filmap
 {
@@ -16,9 +17,16 @@ namespace Filmap
         public Movie searchResultMovie { get; set; }
         public string filmapApiUrl = "http://apifilmap.ivanilson.xyz";
         public string omdbApiUrl = "http://www.omdbapi.com";
-        public string accessToken;
+        
+        // FOR DEVELOPMENT ONLY, REMOVES THE LOG IN SCREEN AND LOGS IN AS IVANILSON
+        public string accessToken = " eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiaXNzIjoiaHR0cDpcL1wvYXBpZmlsbWFwLml2YW5pbHNvbi54eXpcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ0OTQ0NDgyNiwiZXhwIjoxNDUwMDQ5NjI2LCJuYmYiOjE0NDk0NDQ4MjYsImp0aSI6IjljZWU2ZDUxYTcyZjA1YzU4MTBiZmNlOGUxMmJiMDdjIn0.nQqsP6lS2qAnlilW1-cpVtcL-EiGCj05Ckap7exl2Nw";
+        //public string accessToken; // <- FOR PRODUCTION
+
         public string lat;
         public string lng;
+
+        public ObservableCollection<Movie> myMoviesList = new ObservableCollection<Movie>();
+        public ObservableCollection<NearbyMovie> nearbyMovies = new ObservableCollection<NearbyMovie>();
 
         private static MainViewModel viewModel = null;
 
